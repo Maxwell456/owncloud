@@ -95,7 +95,7 @@ pipeline:
      - SKELETON_DIR=/mnt/data/apps/testing/data/webUISkeleton
     commands:
      - cd /drone/owncloud-smoketest/tests/acceptance
-     - bash run.sh --remote --tags @smokeTest --type webUI
+     - bash run.sh --remote --tags @smokeTest --type webUI --feature features/webUILogin/resetPassword.feature
 
   prepublish:
     image: toolhippie/docker:latest
