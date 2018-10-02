@@ -44,13 +44,11 @@ pipeline:
     detach: true
     environment:
       - DOCKER_HOST=tcp://docker:2375
-      - DEBUG=true
       - OWNCLOUD_APPS_INSTALL=https://github.com/owncloud/testing/releases/download/latest/testing.tar.gz
       - OWNCLOUD_APPS_ENABLE=testing
-      - OWNCLOUD_LOGLEVEL=3
     commands:
       - docker network create oc
-      - docker run -p 8000:80 --network=oc -e OWNCLOUD_LOGLEVEL -e OWNCLOUD_APPS_INSTALL -e OWNCLOUD_APPS_ENABLE --name owncloud owncloud/server:${DRONE_COMMIT_SHA}-${DRONE_BUILD_NUMBER}
+      - docker run -p 8000:80 --network=oc -e OWNCLOUD_APPS_INSTALL -e OWNCLOUD_APPS_ENABLE --name owncloud owncloud/server:${DRONE_COMMIT_SHA}-${DRONE_BUILD_NUMBER}
 
   prepare-acceptance-tests:
     image: owncloudci/php
@@ -65,15 +63,15 @@ pipeline:
     commands:
       - wait-for-it -t 600 docker:8000
 
-#  run-api-smoke-test:
-#     image: owncloudci/php
-#     pull: true
-#     environment:
-#      - TEST_SERVER_URL=http://docker:8000
-#      - SKELETON_DIR=/mnt/data/apps/testing/data/apiSkeleton
-#     commands:
-#      - cd /drone/owncloud-smoketest/tests/acceptance
-#      - bash run.sh --remote --tags @smokeTest --type api
+  run-api-smoke-test:
+     image: owncloudci/php
+     pull: true
+     environment:
+      - TEST_SERVER_URL=http://docker:8000
+      - SKELETON_DIR=/mnt/data/apps/testing/data/apiSkeleton
+     commands:
+      - cd /drone/owncloud-smoketest/tests/acceptance
+      - bash run.sh --remote --tags @smokeTest --type api
 
   mailhog:
     image: toolhippie/docker:latest
@@ -97,7 +95,7 @@ pipeline:
      - SKELETON_DIR=/mnt/data/apps/testing/data/webUISkeleton
     commands:
      - cd /drone/owncloud-smoketest/tests/acceptance
-     - bash run.sh --remote --tags @smokeTest --type webUI --feature features/webUILogin/resetPassword.feature
+     - bash run.sh --remote --tags @smokeTest --type webUI
 
   prepublish:
     image: toolhippie/docker:latest
