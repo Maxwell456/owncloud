@@ -47,9 +47,10 @@ pipeline:
       - DEBUG=true
       - OWNCLOUD_APPS_INSTALL=https://github.com/owncloud/testing/releases/download/latest/testing.tar.gz
       - OWNCLOUD_APPS_ENABLE=testing
-      - OWNCLOUD_LOGLEVEL=0
+      - OWNCLOUD_LOGLEVEL=3
     commands:
-      - docker run -p 8000:80 -e DEBUG -e OWNCLOUD_LOGLEVEL -e OWNCLOUD_APPS_INSTALL -e OWNCLOUD_APPS_ENABLE owncloud/server:${DRONE_COMMIT_SHA}-${DRONE_BUILD_NUMBER}
+      - docker network create oc
+      - docker run -p 8000:80 --network=oc -e OWNCLOUD_LOGLEVEL -e OWNCLOUD_APPS_INSTALL -e OWNCLOUD_APPS_ENABLE --name owncloud owncloud/server:${DRONE_COMMIT_SHA}-${DRONE_BUILD_NUMBER}
 
   prepare-acceptance-tests:
     image: owncloudci/php
@@ -81,7 +82,7 @@ pipeline:
     environment:
       - DOCKER_HOST=tcp://docker:2375
     commands:
-      - docker run -p 1025:1025 -p 8025:8025 mailhog/mailhog
+      - docker run -p 1025:1025 -p 8025:8025 --network=oc --network-alias docker --name mailhog mailhog/mailhog
 
   run-ui-smoke-test:
     image: owncloudci/php
