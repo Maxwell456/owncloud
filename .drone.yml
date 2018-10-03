@@ -71,7 +71,7 @@ pipeline:
       - SKELETON_DIR=/mnt/data/apps/testing/data/apiSkeleton
      commands:
       - cd /drone/owncloud-smoketest/tests/acceptance
-      - bash run.sh --remote --tags @smokeTest --type api
+      - bash run.sh --remote --tags "@smokeTest&&~@skip" --type api
 
   mailhog:
     image: toolhippie/docker:latest
@@ -95,7 +95,7 @@ pipeline:
      - SKELETON_DIR=/mnt/data/apps/testing/data/webUISkeleton
     commands:
      - cd /drone/owncloud-smoketest/tests/acceptance
-     - bash run.sh --remote --tags @smokeTest --type webUI
+     - bash run.sh --remote --tags "@smokeTest&&~@skip" --type webUI
 
   prepublish:
     image: toolhippie/docker:latest
